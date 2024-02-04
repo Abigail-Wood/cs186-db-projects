@@ -1,117 +1,50 @@
-# RookieDB
+# CS186 - Abi Wood
+This repo is cloned information that supports the CS186 projects.
+- Finding the "latest" version of this project code has been a bit of a game, as it is mostly kept internal to CS186 course members. So I'll be patchworking together sources I can find publicly to support this learning.
+- I will store project specifications in a subdirectory as I acquire and complete them from the course gitbook (https://cs186berkeley.net/fa22/ and https://cs186berkeley.net/fa23/).
+- If I find I am running ahead of the Jan 2024 course, I will pull project sheets from https://github.com/PKUFlyingPig/CS186/blob/master/project-handout/proj6/getting-started.md.
+- I may add further course resources and notes in a subdirectory in the future; currently these are being stored locally. 
 
-![The official unofficial mascot of the class projects](images/derpydb-small.jpg)
+## Projects
+This repo contains a bare-bones database implementation, which supports executing simple transactions in series. 
+In the assignments of CS186 class, I will cover:
+1. SQL use (practice with SQL Lite) - Project 1
+2. B+ tree indices - Project 2
+3. Efficient join algorithms and Query optimization - Project 3
+4. Multigranularity and locking to support concurrent execution of transactions - Project 4
+5. Database recovery - Project 5 
 
-This repo contains a bare-bones database implementation, which supports
-executing simple transactions in series. In the assignments of
-this class, you will be adding support for
-B+ tree indices, efficient join algorithms, query optimization, multigranularity
-locking to support concurrent execution of transactions, and database recovery.
+## Local development environment
+I've chosen to use JDK 11 with IntelliJ.
+After cloning this repo, I imported the project as a Maven project (by selecting its pom.xml file.)
+I then compiled the code and ran the tests, as well as running the CLI application and stepping through it under a debugger.
 
-Specs for each of the projects will be released throughout the semester at here: [https://cs186.gitbook.io/project/](https://cs186.gitbook.io/project/)
+## Running project tests
+See [IntelliJ setup](intellij-test-setup.md)
 
-## Overview
-
-In this document, we explain
-
-- how to fetch the released code
-- how to fetch any updates to the released code
-- how to setup a local development environment
-- how to run tests using IntelliJ
-- how to submit your code to turn in assignments
-- the general architecture of the released code
-
-## Fetching the released code
-
-For each project, we will provide a GitHub Classroom link. Follow the
-link to create a GitHub repository with the starter code for the project you are
-working on. Use `git clone` to get a local copy of the newly
-created repository.
-
-## Fetching any updates to the released code
-
-In a perfect world, we would never have to update the released code because
-it would be perfectly free of bugs. Unfortunately, bugs do surface from time to
-time, and you may have to fetch updates. We will provide further instructions
-via a post on Piazza whenever fetching updates is necessary.
-
-## Setting up your local development environment
-
-You are free to use any text editor or IDE to complete the assignments, but **we
-will build and test your code in a docker container with Maven**.
-
-We recommend setting up a local development environment by installing Java
-8 locally (the version our Docker container runs) and using an IDE such as
-IntelliJ.
-
-[Java 8 downloads](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-
-If you have another version of Java installed, it's probably fine to use it, as
-long as you do not use any features not in Java 8. You should run tests
-somewhat frequently inside the container to make sure that your code works with
-our setup.
-
-To import the project into IntelliJ, make sure that you import as a Maven
-project (select the pom.xml file when importing). Make sure that you can compile
-your code and run tests (it's ok if there are a lot of failed tests - you
-haven't begun implementing anything yet!). You should also make sure that you
-can run the debugger and step through code.
-
-## Running tests in IntelliJ
-
-If you are using IntelliJ, and wish to run the tests for a given assignment
-follow the instructions in the following document:
-
-[IntelliJ setup](intellij-test-setup.md)
-
-## Submitting assignments
-
-To submit a project, navigate to the cloned repo, and use
-`git push` to push all of your changes to the remote GitHub repository created
-by GitHub Classroom. Then, go to Gradescope class and click on the
-project to which you want to submit your code. Select GitHub for the submission
-method (if it hasn't been selected already), and select the repository and branch
-with the code you want to upload and submit. If you have not done this before,
-then you will have to link your GitHub account to Gradescope using the "Connect
-to GitHub" button. If you are unable to find the appropriate repository, then you
-might need to go to https://github.com/settings/applications, click Gradescope,
-and grant access to the `berkeley-cs186-student` organization.
-
-Note that you are only allowed to modify certain files for each assignment, and
-changes to other files you are not allowed to modify will be discarded when we
-run tests.
-
-## The code
-
-As you will be working with this codebase for the rest of the semester, it is a good idea to get familiar with it. The code is located in the `src/main/java/edu/berkeley/cs186/database` directory, while the tests are located in the `src/test/java/edu/berkeley/cs186/database directory`. The following is a brief overview of each of the major sections of the codebase.
+## Code architecture
+The code is located in the `src/main/java/edu/berkeley/cs186/database` directory, while the tests are located in the `src/test/java/edu/berkeley/cs186/database directory`. 
+The following is a brief overview of each of the major sections of the codebase.
 
 ### cli
-
-The cli directory contains all the logic for the database's command line interface. Running the main method of CommandLineInterface.java will create an instance of the database and create a simple text interface that you can send and review the results of queries in. **The inner workings of this section are beyond the scope of the class** (although you're free to look around), you'll just need to know how to run the Command Line Interface.
+The cli directory contains all the logic for the database's command line interface. 
+Running the main method of CommandLineInterface.java will create an instance of the database and create a simple text interface that you can send and review the results of queries in.
 
 #### cli/parser
-
-The subdirectory cli/parser contains a lot of scary looking code! Don't be intimidated, this is all generated automatically from the file RookieParser.jjt in the root directory of the repo. The code here handles the logic to convert from user inputted queries (strings) into a tree of nodes representing the query (parse tree).
+The subdirectory cli/parser contains automatically generated code from the file RookieParser.jjt in the root directory of the repo. The code here handles the logic to convert from user inputted queries (strings) into a tree of nodes representing the query (parse tree).
 
 #### cli/visitor
-
 The subdirectory cli/visitor contains classes that help traverse the trees created from the parser and create objects that the database can work with directly.
 
 ### common
-
-The `common` directory contains bits of useful code and general interfaces that
-are not limited to any one part of the codebase.
+The `common` directory contains bits of useful code and general interfaces that are not limited to any one part of the codebase.
 
 ### concurrency
-
-The `concurrency` directory contains a skeleton for adding multigranularity
-locking to the database. You will be implementing this in Project 4.
+The `concurrency` directory contains a skeleton for adding multigranularity locking to the database (supports project 4).
 
 ### databox
-
-Our database has, like most DBMS's, a type system distinct from that of the
-programming language used to implement the DBMS. (Our DBMS doesn't quite provide
-SQL types either, but it's modeled on a simplified version of SQL types).
+Our database has, like most DBMSes, a type system distinct from that of the programming language used to implement the DBMS. 
+(Our DBMS doesn't quite provide SQL types either, but it's modeled on a simplified version of SQL types).
 
 The `databox` directory contains classes which represents values stored in
 a database, as well as their types. The various `DataBox` classes represent
@@ -128,12 +61,9 @@ String s = x.getString();       // An exception is thrown, since x is not a stri
 ```
 
 ### index
-
-The `index` directory contains a skeleton for implementing B+ tree indices. You
-will be implementing this in Project 2.
+The `index` directory contains a skeleton for implementing B+ tree indices (supports Project 2.)
 
 ### memory
-
 The `memory` directory contains classes for managing the loading of data
 into and out of memory (in other words, buffer management).
 
@@ -160,7 +90,6 @@ buffer manager evicts pages from memory when necessary. Implementations of these
 include the `LRUEvictionPolicy` (for LRU) and `ClockEvictionPolicy` (for clock).
 
 ### io
-
 The `io` directory contains classes for managing data on-disk (in other words,
 disk space management).
 
@@ -172,7 +101,6 @@ manager, which maps groups of pages (partitions) to OS-level files, assigns
 each page a virtual page number, and loads/writes these pages from/to disk.
 
 ### query
-
 The `query` directory contains classes for managing and manipulating queries.
 
 The various operator classes are query operators (pieces of a query), some of
@@ -185,12 +113,10 @@ but you will be implementing
 a query optimizer in Project 3 to run the query in a more efficient manner.
 
 ### recovery
-
 The `recovery` directory contains a skeleton for implementing database recovery
 a la ARIES. You will be implementing this in Project 5.
 
 ### table
-
 The `table` directory contains classes representing entire tables and records.
 
 The `Table` class is, as the name suggests, a table in our database. See the
@@ -205,17 +131,14 @@ made up of multiple DataBoxes (one for each column of the table it belongs to).
 
 The `RecordId` class identifies a single record in a table.
 
-
 The `PageDirectory` class is an implementation of a heap file that uses a page directory.
 
 #### table/stats
-
 The `table/stats` directory contains classes for keeping track of statistics of
 a table. These are used to compare the costs of different query plans, when you
 implement query optimization in Project 4.
 
 ### Transaction.java
-
 The `Transaction` interface is the _public_ interface of a transaction - it
 contains methods that users of the database use to query and manipulate data.
 
@@ -223,7 +146,6 @@ This interface is partially implemented by the `AbstractTransaction` abstract
 class, and fully implemented in the `Database.Transaction` inner class.
 
 ### TransactionContext.java
-
 The `TransactionContext` interface is the _internal_ interface of a transaction -
 it contains methods tied to the current transaction that internal methods
 (such as a table record fetch) may utilize.
@@ -236,7 +158,6 @@ This interface is partially implemented by the `AbstractTransactionContext` abst
 class, and fully implemented in the `Database.TransactionContext` inner class.
 
 ### Database.java
-
 The `Database` class represents the entire database. It is the public interface
 of our database - users of our database can use it like a Java library.
 
